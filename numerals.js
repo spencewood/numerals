@@ -20,7 +20,7 @@ var findNextIndex = function(x, inc){
         return findNextIndex(x, i + 1);
     }
 
-    return inc - 1;
+    return i - 1;
 };
 
 var sum = function(arr){
@@ -45,23 +45,27 @@ var getNumeralFromNumber = function(x){
     }
 };
 
-var getIntegerArray = function(x){
-    var f = [];
+var getComponentArray = function(x){
+    var arr = [];
     var next = x;
     var current = getNumberFromIndex(findNextIndex(x));
-    f.push(current);
+    arr.push(current);
 
-    while(sum(f) < x){
+    while(sum(arr) < x){
         next -= current;
         current = getNumberFromIndex(findNextIndex(next));
-        f.push(current);
+        arr.push(current);
     }
 
-    return f;
+    return arr;
 };
 
-exports.findNumeral = function(x){
-    return getIntegerArray(x).map(function(i){
+exports.getNumeral = function(number){
+    return getComponentArray(number).map(function(i){
         return getNumeralFromNumber(i);
     }).join('');
+};
+
+exports.getNumber = function(numeral){
+    //return numeral
 };
