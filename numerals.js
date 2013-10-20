@@ -15,17 +15,17 @@ var nums = [
 ];
 
 var findNextIndex = function(x, inc){
-    var i = inc || 0;
-    if(i < nums.length && getNumberFromIndex(i) <= x){
-        return findNextIndex(x, i + 1);
+    inc = inc || 0;
+    if(inc < nums.length && getNumberFromIndex(inc) <= x){
+        return findNextIndex(x, inc + 1);
     }
 
-    return i - 1;
+    return inc - 1;
 };
 
 var sum = function(arr){
-    return arr.reduce(function(prev, curr){
-        return prev + curr;
+    return arr.reduce(function(prev, current){
+        return prev + current;
     }, 0);
 };
 
@@ -45,16 +45,13 @@ var getNumeralFromNumber = function(x){
     }
 };
 
-var getComponentArray = function(x){
-    var arr = [];
-    var next = x;
-    var current = getNumberFromIndex(findNextIndex(x));
-    arr.push(current);
+var getComponentArray = function(target, current, arr){
+    arr = arr || [], current = current || target;
+    var next = getNumberFromIndex(findNextIndex(current));
+    arr.push(next);
 
-    while(sum(arr) < x){
-        next -= current;
-        current = getNumberFromIndex(findNextIndex(next));
-        arr.push(current);
+    if(sum(arr) < target){
+        return getComponentArray(target, current - next, arr);
     }
 
     return arr;
