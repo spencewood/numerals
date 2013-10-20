@@ -29,40 +29,75 @@ var sum = function(arr){
     }, 0);
 };
 
-var getNumberFromIndex = function(x){
-    return nums[x].num;
+var getNumberFromIndex = function(i){
+    //error checking
+    return nums[i].num;
 };
 
-var getNumeralFromIndex = function(x){
-    return nums[x].numeral;
+var getNumeralFromIndex = function(i){
+    //error checking
+    return nums[i].numeral;
 };
 
-var getNumeralFromNumber = function(x){
+var findNumeralFromNumber = function(x){
     for(var i = 0; i < nums.length; i++){
-        if(nums[i].num === x){
-            return nums[i].numeral;
+        if(getNumberFromIndex(i) === x){
+            return getNumeralFromIndex(i);
         }
     }
+
+    return -1;
 };
 
-var getComponentArray = function(target, current, arr){
+var findNumberFromNumeral = function(x){
+    for(var i = 0; i < nums.length; i++){
+        if(getNumeralFromIndex(i) === x){
+            return getNumberFromIndex(i);
+        }
+    }
+
+    return -1;
+};
+
+var getNumeralComponentArray = function(target, current, arr){
     arr = arr || [], current = current || target;
     var next = getNumberFromIndex(findNextIndex(current));
     arr.push(next);
 
     if(sum(arr) < target){
-        return getComponentArray(target, current - next, arr);
+        return getNumeralComponentArray(target, current - next, arr);
+    }
+
+    return arr;
+};
+
+var getNumberComponentArray = function(target, arr){
+    arr = arr || [];
+    var targetArr = target.split('');
+    var numeralComp = targetArr.splice(0, 2);
+    var num = findNumberFromNumeral(numeralComp.join(''));
+    
+    if(num > 0){
+        arr.push(num);
+    }
+    else{
+        targetArr.unshift(numeralComp.splice(1, 1));
+        arr.push(findNumberFromNumeral(numeralComp.join('')));
+    }
+
+    if(targetArr.length > 0){
+        return getNumberComponentArray(targetArr.join(''), arr);
     }
 
     return arr;
 };
 
 exports.getNumeral = function(number){
-    return getComponentArray(number).map(function(i){
-        return getNumeralFromNumber(i);
+    return getNumeralComponentArray(number).map(function(i){
+        return findNumeralFromNumber(i);
     }).join('');
 };
 
 exports.getNumber = function(numeral){
-    //return numeral
+    return sum.call(null, getNumberComponentArray(numeral));
 };
