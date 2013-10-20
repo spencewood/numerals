@@ -4,10 +4,16 @@ require('should');
 
 describe('numerals', function(){
     describe('getNumeral', function(){
-        it.skip('should throw if passing an invalid string', function(){
+        it('should throw if passing an invalid number', function(){
             (function(){
                 numerals.getNumeral('fail');
-            }).should.throw();
+            }).should.throw(/Invalid/);
+        });
+
+        it('should throw if passing nothing', function(){
+            (function(){
+                numerals.getNumeral();
+            }).should.throw(/Invalid/);
         });
 
         describe('basic', function(){
@@ -65,6 +71,10 @@ describe('numerals', function(){
         });
         
         describe('mixed', function(){
+            it('should return III when passing 3', function(){
+                numerals.getNumeral(3).should.equal('III');
+            });
+
             it('should return MMXIII when passing 2013', function(){
                 numerals.getNumeral(2013).should.equal('MMXIII');
             });
@@ -80,71 +90,87 @@ describe('numerals', function(){
     });
     
     describe('getNumber', function(){
-        describe.skip('basic', function(){
+        it('should throw if passing an invalid numeral', function(){
+            (function(){
+                numerals.getNumber('fail');
+            }).should.throw(/Invalid/);
+        });
+
+        it('should throw if passing nothing', function(){
+            (function(){
+                numerals.getNumber();
+            }).should.throw(/Invalid/);
+        });
+
+        describe('basic', function(){
             it('should return 1 when passing I', function(){
                 numerals.getNumber('I').should.equal(1);
             });
 
             it('should return 4 when passing IV', function(){
-                numerals.getNumeral('IV').should.equal(4);
+                numerals.getNumber('IV').should.equal(4);
             });
 
             it('should return 5 when passing V', function(){
-                numerals.getNumeral('V').should.equal(5);
+                numerals.getNumber('V').should.equal(5);
             });
 
             it('should return 9 when passing IX', function(){
-                numerals.getNumeral('IX').should.equal(9);
+                numerals.getNumber('IX').should.equal(9);
             });
 
             it('should return 10 when passing X', function(){
-                numerals.getNumeral('X').should.equal(10);
+                numerals.getNumber('X').should.equal(10);
             });
 
             it('should return 40 when passing XL', function(){
-                numerals.getNumeral('XL').should.equal(40);
+                numerals.getNumber('XL').should.equal(40);
             });
 
             it('should return 50 when passing L', function(){
-                numerals.getNumeral('L').should.equal(50);
+                numerals.getNumber('L').should.equal(50);
             });
 
             it('should return 90 when passing XC', function(){
-                numerals.getNumeral('XC').should.equal(90);
+                numerals.getNumber('XC').should.equal(90);
             });
 
             it('should return 100 when passing C', function(){
-                numerals.getNumeral('C').should.equal(100);
+                numerals.getNumber('C').should.equal(100);
             });
 
             it('should return 400 when passing CD', function(){
-                numerals.getNumeral('CD').should.equal(400);
+                numerals.getNumber('CD').should.equal(400);
             });
 
             it('should return 500 when passing D', function(){
-                numerals.getNumeral('D').should.equal(500);
+                numerals.getNumber('D').should.equal(500);
             });
 
             it('should return 900 when passing CM', function(){
-                numerals.getNumeral('CM').should.equal(900);
+                numerals.getNumber('CM').should.equal(900);
             });
 
             it('should return 1000 when passing M', function(){
-                numerals.getNumeral('M').should.equal(1000);
+                numerals.getNumber('M').should.equal(1000);
             });
         });
 
         describe('mixed', function(){
+            it('should return 3 when passing III', function(){
+                numerals.getNumber('III').should.equal(3);
+            });
+
             it('should return 2013 when passing MMXIII', function(){
                 numerals.getNumber('MMXIII').should.equal(2013);
             });
 
-            it.skip('should return 1954 when passing MCMLIV', function(){
-                numerals.getNumeral('MCMLIV').should.equal(1954);
+            it('should return 1954 when passing MCMLIV', function(){
+                numerals.getNumber('MCMLIV').should.equal(1954);
             });
 
-            it.skip('should return 1066 when passing MLXVI', function(){
-                numerals.getNumeral('MLXVI').should.equal(1066);
+            it('should return 1066 when passing MLXVI', function(){
+                numerals.getNumber('MLXVI').should.equal(1066);
             });
         });
     });

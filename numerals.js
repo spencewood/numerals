@@ -14,13 +14,8 @@ var nums = [
     { num: 1000, numeral: 'M' }
 ];
 
-var findNextIndex = function(x, inc){
-    inc = inc || 0;
-    if(inc < nums.length && getNumberFromIndex(inc) <= x){
-        return findNextIndex(x, inc + 1);
-    }
-
-    return inc - 1;
+var existy = function(val){
+    return val != null;
 };
 
 var sum = function(arr){
@@ -30,13 +25,19 @@ var sum = function(arr){
 };
 
 var getNumberFromIndex = function(i){
-    //error checking
-    return nums[i].num;
+    if(existy(nums[i])){
+        return nums[i].num;
+    }
+
+    throw new Error('Invalid number');
 };
 
 var getNumeralFromIndex = function(i){
-    //error checking
-    return nums[i].numeral;
+    if(existy(nums[i])){
+        return nums[i].numeral;
+    }
+    
+    throw new Error('Invalid numeral');
 };
 
 var findNumeralFromNumber = function(x){
@@ -59,41 +60,54 @@ var findNumberFromNumeral = function(x){
     return -1;
 };
 
-var getNumeralComponentArray = function(target, current, arr){
-    arr = arr || [], current = current || target;
+var findNextIndex = function(x, inc){
+    inc = inc || 0;
+    if(inc < nums.length && getNumberFromIndex(inc) <= x){
+        return findNextIndex(x, inc + 1);
+    }
+
+    return inc - 1;
+};
+
+var getNumeralComponentArray = function(num, current, arr){
+    arr = arr || [], current = current || num;
     var next = getNumberFromIndex(findNextIndex(current));
     arr.push(next);
 
-    if(sum(arr) < target){
-        return getNumeralComponentArray(target, current - next, arr);
+    if(sum(arr) < num){
+        return getNumeralComponentArray(num, current - next, arr);
     }
 
     return arr;
 };
 
-var getNumberComponentArray = function(target, arr){
+var getNumberComponentArray = function(numeral, arr){
     arr = arr || [];
-    var targetArr = target.split('');
-    var numeralComp = targetArr.splice(0, 2);
+    numeral = numeral || '';
+    var numeralArr = numeral.split('');
+    var numeralComp = numeralArr.splice(0, 2);
     var num = findNumberFromNumeral(numeralComp.join(''));
-    
+
     if(num > 0){
         arr.push(num);
     }
+    else if(numeral.length <= 1){
+        throw new Error('Invalid numeral');
+    }
     else{
-        targetArr.unshift(numeralComp.splice(1, 1));
+        numeralArr.unshift(numeralComp.splice(1, 1));
         arr.push(findNumberFromNumeral(numeralComp.join('')));
     }
 
-    if(targetArr.length > 0){
-        return getNumberComponentArray(targetArr.join(''), arr);
+    if(numeralArr.length > 0){
+        return getNumberComponentArray(numeralArr.join(''), arr);
     }
 
     return arr;
 };
 
-exports.getNumeral = function(number){
-    return getNumeralComponentArray(number).map(function(i){
+exports.getNumeral = function(num){
+    return getNumeralComponentArray(num).map(function(i){
         return findNumeralFromNumber(i);
     }).join('');
 };
