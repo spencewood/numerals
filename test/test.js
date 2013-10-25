@@ -16,6 +16,12 @@ describe('numerals', function(){
             }).should.throw(/Invalid/);
         });
 
+        it('should throw if passing a number larger than 3999999', function(){
+            (function(){
+                numerals.getNumeral(4000000);
+            }).should.throw(/max/i);
+        });
+
         describe('basic', function(){
             it('should return I when passing 1', function(){
                 numerals.getNumeral(1).should.equal('I');
@@ -85,6 +91,14 @@ describe('numerals', function(){
 
             it('should return MLXVI when passing 1066', function(){
                 numerals.getNumeral(1066).should.equal('MLXVI');
+            });
+
+            it('should return mmmdccclxxxvMMMDCCCLXXXVIII when passing 3888888', function(){
+                numerals.getNumeral(3888888).should.equal('mmmdccclxxxvMMMDCCCLXXXVIII');
+            });
+
+            it('should return mmmcmxcixCMXCIX when passing 3999999', function(){
+                numerals.getNumeral(3999999).should.equal('mmmcmxcixCMXCIX');
             });
         });
     });
@@ -171,6 +185,14 @@ describe('numerals', function(){
 
             it('should return 1066 when passing MLXVI', function(){
                 numerals.getNumber('MLXVI').should.equal(1066);
+            });
+
+            it('should return 3888888 when passing mmmdccclxxxvMMMDCCCLXXXVIII', function(){
+                numerals.getNumber('mmmdccclxxxvMMMDCCCLXXXVIII').should.equal(3888888);
+            });
+
+            it('should return 3999999 when passing mmmcmxcixCMXCIX ', function(){
+                numerals.getNumber('mmmcmxcixCMXCIX').should.equal(3999999);
             });
         });
     });

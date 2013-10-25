@@ -11,7 +11,19 @@ var nums = [
     { num: 400, numeral: 'CD' },
     { num: 500, numeral: 'D' },
     { num: 900, numeral: 'CM' },
-    { num: 1000, numeral: 'M' }
+    { num: 1000, numeral: 'M' },
+    { num: 4000, numeral: 'iv' },
+    { num: 5000, numeral: 'v' },
+    { num: 9000, numeral: 'ix' },
+    { num: 10000, numeral: 'x' },
+    { num: 40000, numeral: 'xl' },
+    { num: 50000, numeral: 'l' },
+    { num: 90000, numeral: 'xc' },
+    { num: 100000, numeral: 'c' },
+    { num: 400000, numeral: 'cd'},
+    { num: 500000, numeral: 'd' },
+    { num: 900000, numeral: 'cm' },
+    { num: 1000000, numeral: 'm' }
 ];
 
 var existy = function(val){
@@ -125,6 +137,9 @@ var getNumberComponentArray = function(numeral){
 exports.getNumeral = function(num){
     if(!existy(num)){
         throw new Error('Invalid number');
+    }
+    if(num > 3999999){
+        throw new Error('Max numeral exceeded');
     }
     return getNumeralComponentArray(num).map(function(i){
         return findNumeralFromNumber(i);
