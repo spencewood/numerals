@@ -36,6 +36,10 @@ var sum = function(arr){
     }, 0);
 };
 
+var complain = function(msg){
+    throw new Error(msg);
+};
+
 var stringToArray = function(string){
     return string.split('');
 };
@@ -45,7 +49,7 @@ var getNumberFromIndex = function(i){
         return nums[i].num;
     }
 
-    throw new Error('Invalid number');
+    complain('Invalid number');
 };
 
 var getNumeralFromIndex = function(i){
@@ -53,7 +57,7 @@ var getNumeralFromIndex = function(i){
         return nums[i].numeral;
     }
     
-    throw new Error('Invalid numeral');
+    complain('Invalid numeral');
 };
 
 var findNumeralFromNumber = function(x){
@@ -63,7 +67,7 @@ var findNumeralFromNumber = function(x){
         }
     }
 
-    return -1;
+    return undefined;
 };
 
 var findNumberFromNumeral = function(x){
@@ -73,7 +77,7 @@ var findNumberFromNumeral = function(x){
         }
     }
 
-    return -1;
+    return undefined;
 };
 
 var findNextIndex = function(x, inc){
@@ -119,7 +123,7 @@ var getSplitNumeralArray = function(numeral, arr){
                 arr.push(meral);
             }
             else{
-                throw new Error('Invalid numeral');
+                complain('Invalid numeral');
             }
         }
         return getSplitNumeralArray(numeralArr.join(''), arr);
@@ -136,11 +140,12 @@ var getNumberComponentArray = function(numeral){
 
 exports.getNumeral = function(num){
     if(!existy(num)){
-        throw new Error('Invalid number');
+        complain('Invalid number');
     }
     if(num > 3999999){
-        throw new Error('Max numeral exceeded');
+        complain('Max numeral exceeded');
     }
+    
     return getNumeralComponentArray(num).map(function(i){
         return findNumeralFromNumber(i);
     }).join('');
@@ -148,7 +153,11 @@ exports.getNumeral = function(num){
 
 exports.getNumber = function(numeral){
     if(!existy(numeral)){
-        throw new Error('Invalid numeral');
+        complain('Invalid numeral');
     }
+    if(/(.)\1{3,}/.test(numeral)){
+        complain('Invalid numeral');
+    }
+
     return sum(getNumberComponentArray(numeral));
 };

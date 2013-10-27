@@ -116,6 +116,12 @@ describe('numerals', function(){
             }).should.throw(/Invalid/);
         });
 
+        it('should throw if passing a numeral with more than three repeating characters', function(){
+            (function(){
+                numerals.getNumber('IIII');
+            }).should.throw(/Invalid/);
+        });
+
         describe('basic', function(){
             it('should return 1 when passing I', function(){
                 numerals.getNumber('I').should.equal(1);
