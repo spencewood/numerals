@@ -13,7 +13,7 @@ describe('numerals', function(){
         it('should throw if passing nothing', function(){
             (function(){
                 numerals.getNumeral();
-            }).should.throw(/Invalid/);
+            }).should.throw(/Must specify/);
         });
 
         it('should throw if passing a number larger than 3999999', function(){
@@ -113,7 +113,7 @@ describe('numerals', function(){
         it('should throw if passing nothing', function(){
             (function(){
                 numerals.getNumber();
-            }).should.throw(/Invalid/);
+            }).should.throw(/Must specify/);
         });
 
         it('should throw if passing a numeral with more than three repeating characters', function(){
