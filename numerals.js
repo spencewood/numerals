@@ -75,24 +75,24 @@
         complain('Invalid numeral');
     };
 
-    var findNumeralFromNumber = function(x){
-        for(var i = 0; i < nums.length; i++){
-            if(getNumberFromIndex(i) === x){
-                return getNumeralFromIndex(i);
-            }
-        }
-
-        return undefined;
+    var firstNum = function(fun){
+        return nums.filter(fun).shift();
     };
 
-    var findNumberFromNumeral = function(x){
-        for(var i = 0; i < nums.length; i++){
-            if(getNumeralFromIndex(i) === x){
-                return getNumberFromIndex(i);
-            }
-        }
+    var findNumeralFromNumber = function(num){
+        var obj = firstNum(function(n){
+            return n.num === num;
+        });
 
-        return undefined;
+        return existy(obj) ? obj.numeral : undefined;
+    };
+
+    var findNumberFromNumeral = function(numeral){
+        var obj = firstNum(function(n){
+            return n.numeral === numeral;
+        });
+
+        return existy(obj) ? obj.num : undefined;
     };
 
     var findNextIndex = function(x, inc){
