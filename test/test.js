@@ -10,16 +10,18 @@ describe('numerals', function(){
             }).should.throw(/Invalid/);
         });
 
-        it('should throw if passing nothing', function(){
-            (function(){
-                numerals.getNumeral();
-            }).should.throw(/Must specify/);
-        });
-
         it('should throw if passing a number larger than 3999999', function(){
             (function(){
                 numerals.getNumeral(4000000);
             }).should.throw(/max/i);
+        });
+
+        it('should return a blank string when passing nothing', function(){
+            numerals.getNumeral().should.equal('');
+        });
+
+        it('should return a blank string when passing a blank string', function(){
+            numerals.getNumeral('').should.equal('');
         });
 
         describe('basic', function(){
@@ -110,16 +112,28 @@ describe('numerals', function(){
             }).should.throw(/Invalid/);
         });
 
-        it('should throw if passing nothing', function(){
-            (function(){
-                numerals.getNumber();
-            }).should.throw(/Must specify/);
-        });
-
         it('should throw if passing a numeral with more than three repeating characters', function(){
             (function(){
                 numerals.getNumber('IIII');
             }).should.throw(/Invalid/);
+        });
+
+        it('should not allow small numerals to come before larger ones', function(){
+            (function(){
+                numerals.getNumber('IIX');
+            }).should.throw(/Invalid/);
+
+            (function(){
+                numerals.getNumber('XXx');
+            }).should.throw(/Invalid/);
+        });
+
+        it('should return a blank string when passing nothing', function(){
+            numerals.getNumber().should.equal('');
+        });
+
+        it('should return a blank string when passing a blank string', function(){
+            numerals.getNumber('').should.equal('');
         });
 
         describe('basic', function(){

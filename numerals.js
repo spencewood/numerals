@@ -59,6 +59,18 @@
         return string.split('');
     };
 
+    var hasDescendingNumerals = function(arr){
+        var isSorted = true;
+        arr.reduce(function(a, b){
+            if(a < b){
+                isSorted = false;
+            }
+            return a;
+        });
+
+        return isSorted;
+    };
+
     var getNumberFromIndex = function(i){
         if(existy(nums[i])){
             return nums[i].num;
@@ -162,8 +174,8 @@
      * @returns { String } The Roman Numeral string value for the passed in integer
      */
     exports.getNumeral = function(num){
-        if(!existy(num)){
-            complain('Must specify a number');
+        if(!existy(num) || num === ''){
+            return '';
         }
         if(num > 3999999){
             complain('Max numeral exceeded');
@@ -179,13 +191,19 @@
      * @returns { Integer } The integer value of the Roman Numeral string
      */
     exports.getNumber = function(numeral){
-        if(!existy(numeral)){
-            complain('Must specify a numeral');
+        if(!existy(numeral) || numeral === ''){
+            return '';
         }
         if(/(.)\1{3,}/.test(numeral)){
             complain('Invalid numeral');
         }
 
-        return sum(getNumberComponentArray(numeral));
+        var numerals = getNumberComponentArray(numeral);
+
+        if(hasDescendingNumerals(numerals)){
+            return sum(numerals);
+        }
+
+        throw new Error('Invalid');
     };
 }));
