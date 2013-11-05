@@ -59,7 +59,47 @@
         return string.split('');
     };
 
-    var hasDescendingNumerals = function(arr){
+    var argumentsToArray = function(args){
+        return [].slice.call(args);
+    };
+
+    var rest = function(arr){
+        return arr.slice(1);
+    };
+
+    var combine = function(arr){
+        return arr.join('');
+    };
+
+    var pipeline = function(seed){
+        return rest(argumentsToArray(arguments)).reduce(function(l, r){
+            return r(l);
+        }, seed);
+    };
+
+    var validator = function(message, fun){
+        var f = function(){
+            return fun.apply(fun, arguments);
+        };
+
+        f.message = message;
+        return f;
+    };
+
+    var validate = function(){
+        var validators = argumentsToArray(arguments);
+
+        return function(test){
+            return validators.reduce(function(errs, check){
+                if(!check(test)){
+                    complain(check.message);
+                }
+                return errs;
+            }, []);
+        };
+    };
+
+    var hasDescendingNumbers = function(arr){
         var isSorted = true;
         arr.reduce(function(a, b){
             if(a < b){
@@ -120,19 +160,27 @@
         return findNumberFromNumeral(numeral) > 0;
     };
 
-    var getNumeralComponentArray = function(num, current, arr){
+    var getNumberComponents = function(num, current, arr){
         arr = arr || [], current = current || num;
         var next = getNumberFromIndex(findNextIndex(current));
         arr.push(next);
 
         if(sum(arr) < num){
-            return getNumeralComponentArray(num, current - next, arr);
+            return getNumberComponents(num, current - next, arr);
         }
 
         return arr;
     };
 
-    var getSplitNumeralArray = function(numeral, arr){
+    var convertNumberToNumeral = function(number){
+        return findNumeralFromNumber(number);
+    };
+
+    var convertNumbersToNumerals = function(arr){
+        return arr.map(convertNumberToNumeral);
+    };
+
+    var getNumeralComponents = function(numeral, arr){
         numeral = numeral || '', arr = arr || [];
 
         if(numeral.length > 0){
@@ -157,40 +205,57 @@
                     complain('Invalid numeral');
                 }
             }
-            return getSplitNumeralArray(numeralArr.join(''), arr);
+            return getNumeralComponents(numeralArr.join(''), arr);
         }
 
         return arr;
     };
 
-    var getNumberComponentArray = function(numeral){
-        return getSplitNumeralArray(numeral).map(function(i){
-            return findNumberFromNumeral(i);
+    var convertNumeralToNumber = function(numeral){
+        return findNumberFromNumeral(numeral);
+    };
+
+    var convertNumeralsToNumbers = function(arr){
+        return arr.map(convertNumeralToNumber);
+    };
+
+    var numberBelowFourMillionValidator = function(number){
+        return validator('Max numeral exceeded', function(){
+            return number < 4000000;
         });
     };
 
-    /**
-     * @param { Integer } num An integer to be converted to a Roman Numeral
-     * @returns { String } The Roman Numeral string value for the passed in integer
-     */
-    exports.getNumeral = function(num){
-        if(!existy(num) || num === ''){
-            return '';
-        }
-        if(num > 3999999){
-            complain('Max numeral exceeded');
-        }
-        
-        return getNumeralComponentArray(num).map(function(i){
-            return findNumeralFromNumber(i);
-        }).join('');
+    var validNumberValidator = function(number){
+        return validator('Invalid number', function(){
+            return !isNaN(number);
+        });
     };
 
-    /**
-     * @param { String } numeral A Roman Numeral
-     * @returns { Integer } The integer value of the Roman Numeral string
-     */
-    exports.getNumber = function(numeral){
+    var validateNumberIsBelowFourMillion = function(number){
+        return validate(numberBelowFourMillionValidator(number));
+    };
+
+    var validateThatNumberIsANumber = function(number){
+        return validate(validNumberValidator(number));
+    };
+
+    var getNumeral = function(number){
+        if(!existy(number) || number === ''){
+            return '';
+        }
+        validateThatNumberIsANumber(number)();
+        validateNumberIsBelowFourMillion(number)();
+
+        return pipeline(
+            number,
+            //validateNumberIsBelowFourMillion,
+            getNumberComponents,
+            convertNumbersToNumerals,
+            combine
+        );
+    };
+
+    var getNumber = function(numeral){
         if(!existy(numeral) || numeral === ''){
             return '';
         }
@@ -198,12 +263,24 @@
             complain('Invalid numeral');
         }
 
-        var numerals = getNumberComponentArray(numeral);
+        var numbers = pipeline(numeral, getNumeralComponents, convertNumeralsToNumbers);
 
-        if(hasDescendingNumerals(numerals)){
-            return sum(numerals);
+        if(!hasDescendingNumbers(numbers)){
+            throw new Error('Invalid numeral');
         }
 
-        throw new Error('Invalid');
+        return pipeline(numbers, sum);
     };
+
+    /**
+     * @param { Integer } number An integer to be converted to a Roman Numeral
+     * @returns { String } The Roman Numeral string value for the passed in integer
+     */
+    exports.getNumeral = getNumeral;
+
+    /**
+     * @param { String } numeral A Roman Numeral
+     * @returns { Integer } The integer value of the Roman Numeral string
+     */
+    exports.getNumber = getNumber;
 }));
