@@ -99,6 +99,16 @@
         };
     };
 
+    var grabStringPart = function(str, len){
+        return [].slice.apply(str, [0, len]).join('');
+    };
+
+    var chopStringPart = function(str, len){
+        var arr = stringToArray(str);
+        arr.splice(0, len);
+        return arr.join('');
+    };
+
     var hasDescendingNumbers = function(arr){
         var isSorted = true;
         arr.reduce(function(a, b){
@@ -180,32 +190,30 @@
         return arr.map(convertNumberToNumeral);
     };
 
-    var getNumeralComponents = function(numeral, arr){
-        numeral = numeral || '', arr = arr || [];
+    var shiftNumeral = function(fullNumeral, len){
+        var numeral = grabStringPart(fullNumeral, len);
 
-        if(numeral.length > 0){
-            // take off the first two characters of the numeral string
-            var numeralArr = stringToArray(numeral);
-            var numeralComp = numeralArr.splice(0, 2);
-            var meral = numeralComp.join('');
-
-            // test if those two characters are a numeral
-            if(isValidNumeral(meral)){
-                arr.push(meral);
+        if(len-- > 0){
+            if(isValidNumeral(numeral)){
+                return numeral;
             }
             else{
-                // if not, put the right character back onto the numeral string 
-                numeralArr.unshift(numeralComp.pop());
-                meral = numeralComp.pop();
-                // test if just the first character is a valid numeral
-                if(isValidNumeral(meral)){
-                    arr.push(meral);
-                }
-                else{
-                    complain('Invalid numeral');
-                }
+                return shiftNumeral(fullNumeral, len);
             }
-            return getNumeralComponents(numeralArr.join(''), arr);
+        }
+        
+        complain('Invalid numeral');
+    };
+
+    var getNumeralComponents = function(fullNumeral, arr){
+        fullNumeral = fullNumeral || '', arr = arr || [];
+
+        if(fullNumeral.length > 0){
+            var numeral = shiftNumeral(fullNumeral, 2);
+            var newFullNumeral = chopStringPart(fullNumeral, numeral.length);
+            arr.push(numeral);
+
+            return getNumeralComponents(newFullNumeral, arr);
         }
 
         return arr;
