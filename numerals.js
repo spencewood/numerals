@@ -77,6 +77,14 @@
         }, seed);
     };
 
+    var partial = function(fun, arg){
+        return function(){
+            var args = argumentsToArray(arguments);
+            args.shift(arg);
+            return fun.apply(fun, args);
+        };
+    };
+
     var validator = function(message, fun){
         var f = function(){
             return fun.apply(fun, arguments);
@@ -251,12 +259,11 @@
         if(!existy(number) || number === ''){
             return '';
         }
-        validateThatNumberIsANumber(number)();
-        validateNumberIsBelowFourMillion(number)();
 
         return pipeline(
             number,
-            //validateNumberIsBelowFourMillion,
+            partial(validateThatNumberIsANumber, number),
+            partial(validateNumberIsBelowFourMillion, number),
             getNumberComponents,
             convertNumbersToNumerals,
             combine
