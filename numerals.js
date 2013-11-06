@@ -77,14 +77,6 @@
         }, seed);
     };
 
-    var partial = function(fun, arg){
-        return function(){
-            var args = argumentsToArray(arguments);
-            args.shift(arg);
-            return fun.apply(fun, args);
-        };
-    };
-
     var validator = function(message, fun){
         var f = function(){
             return fun.apply(fun, arguments);
@@ -98,23 +90,24 @@
         var validators = argumentsToArray(arguments);
 
         return function(test){
-            return validators.reduce(function(errs, check){
+            validators.reduce(function(errs, check){
                 if(!check(test)){
                     complain(check.message);
                 }
-                return errs;
             }, []);
+
+            return test;
         };
     };
 
     var grabStringPart = function(str, len){
-        return [].slice.apply(str, [0, len]).join('');
+        return combine([].slice.apply(str, [0, len]));
     };
 
     var chopStringPart = function(str, len){
         var arr = stringToArray(str);
         arr.splice(0, len);
-        return arr.join('');
+        return combine(arr);
     };
 
     var hasDescendingNumbers = function(arr){
@@ -190,14 +183,6 @@
         return arr;
     };
 
-    var convertNumberToNumeral = function(number){
-        return findNumeralFromNumber(number);
-    };
-
-    var convertNumbersToNumerals = function(arr){
-        return arr.map(convertNumberToNumeral);
-    };
-
     var shiftNumeral = function(fullNumeral, len){
         var numeral = grabStringPart(fullNumeral, len);
 
@@ -227,6 +212,14 @@
         return arr;
     };
 
+    var convertNumberToNumeral = function(number){
+        return findNumeralFromNumber(number);
+    };
+
+    var convertNumbersToNumerals = function(arr){
+        return arr.map(convertNumberToNumeral);
+    };
+
     var convertNumeralToNumber = function(numeral){
         return findNumberFromNumeral(numeral);
     };
@@ -235,24 +228,28 @@
         return arr.map(convertNumeralToNumber);
     };
 
-    var numberBelowFourMillionValidator = function(number){
-        return validator('Max numeral exceeded', function(){
+    var validateThatNumberIsBelowFourMillion = function(){
+        return validate(validator('Max numeral exceeded', function(number){
             return number < 4000000;
-        });
+        }));
     };
 
-    var validNumberValidator = function(number){
-        return validator('Invalid number', function(){
+    var validateThatNumberIsANumber = function(){
+        return validate(validator('Invalid number', function(number){
             return !isNaN(number);
-        });
+        }));
     };
 
-    var validateNumberIsBelowFourMillion = function(number){
-        return validate(numberBelowFourMillionValidator(number));
+    var validateThatNumeralHasNoMoreThanThreeConsecutiveLetters = function(){
+        return validate(validator('Invalid numeral', function(numeral){
+            return !(/(.)\1{3,}/).test(numeral);
+        }));
     };
 
-    var validateThatNumberIsANumber = function(number){
-        return validate(validNumberValidator(number));
+    var validateThatNumbersAreDescending = function(){
+        return validate(validator('Invalid numeral', function(numbers){
+            return hasDescendingNumbers(numbers);
+        }));
     };
 
     var getNumeral = function(number){
@@ -262,8 +259,8 @@
 
         return pipeline(
             number,
-            partial(validateThatNumberIsANumber, number),
-            partial(validateNumberIsBelowFourMillion, number),
+            validateThatNumberIsANumber(),
+            validateThatNumberIsBelowFourMillion(),
             getNumberComponents,
             convertNumbersToNumerals,
             combine
@@ -274,17 +271,15 @@
         if(!existy(numeral) || numeral === ''){
             return '';
         }
-        if(/(.)\1{3,}/.test(numeral)){
-            complain('Invalid numeral');
-        }
 
-        var numbers = pipeline(numeral, getNumeralComponents, convertNumeralsToNumbers);
-
-        if(!hasDescendingNumbers(numbers)){
-            throw new Error('Invalid numeral');
-        }
-
-        return pipeline(numbers, sum);
+        return pipeline(
+            numeral,
+            validateThatNumeralHasNoMoreThanThreeConsecutiveLetters(),
+            getNumeralComponents,
+            convertNumeralsToNumbers,
+            validateThatNumbersAreDescending(),
+            sum
+        );
     };
 
     /**
