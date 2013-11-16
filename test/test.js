@@ -136,6 +136,10 @@ describe('numerals', function(){
             numerals.getNumber('').should.equal('');
         });
 
+        it('should be of type Number', function(){
+            numerals.getNumber('I').should.be.a.Number;
+        });
+
         describe('basic', function(){
             it('should return 1 when passing I', function(){
                 numerals.getNumber('I').should.equal(1);
