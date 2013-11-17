@@ -29,4 +29,5 @@ The max numeral that this library supports is 3999999.
 
 ## Tests
 $ npm install --dev
+
 $ make test
