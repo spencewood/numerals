@@ -28,7 +28,7 @@ Very large Roman Numerals are rare in the wild. If special formatting is needed 
 The max numeral that this library supports is 3999999. 
 
 ## Tests
-```bash
+```shell
 $ npm install --dev
 $ make test
 ```
