@@ -4,7 +4,7 @@
     "description": "A numeral to number and number to numeral converter",
     "repository" :{ 
         "type" : "git",
-        "url" : "https://github.com/tcollard/numerals"
+        "url" : "https://github.com/tcollard/numerals.git"
     },
     "devDependencies": {
         "mocha": "*",

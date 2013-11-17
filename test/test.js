@@ -104,6 +104,22 @@ describe('numerals', function(){
             });
         });
     });
+
+    describe('getNumeralParts', function(){
+        it('should return an array of two', function(){
+            numerals.getNumeralParts(1000000).length.should.equal(2);
+            numerals.getNumeralParts(1).length.should.equal(2);
+            numerals.getNumeralParts(3000000).length.should.equal(2);
+        });
+
+        it('should have barred numerals as the first element', function(){
+            numerals.getNumeralParts(3999999)[0].should.equal('mmmcmxcix');
+        });
+
+        it('should have the nonbarred numerals in the second element', function(){
+            numerals.getNumeralParts(3999999)[1].should.equal('CMXCIX');
+        });
+    });
     
     describe('getNumber', function(){
         it('should throw if passing an invalid numeral', function(){

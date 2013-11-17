@@ -2,8 +2,9 @@
  * Numerals -- Roman Numeral conversion library
  *
  * exposes:
- *     getNumeral(int) - Takes a number and returns a numeral
- *     getNumber(str)  - Takes a numeral and returns a number
+ *     getNumeral(int)      - Takes a number and returns a numeral
+ *     getNumeralParts(int) - Takes a number and returns a two element array
+ *     getNumber(str)       - Takes a numeral and returns a number
  */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -349,6 +350,7 @@
     /**
      * Breaks apart a passed in numeral into a valid numeral component array.
      * E.g. XIV would break down into: ['X', 'IV']
+     * This is a recursive function.
      * @param  {String} fullNumeral
      * @param  {Array} arr
      * @return {Array}
@@ -477,7 +479,7 @@
      * @param   {Integer} number Integer to be converted to a Roman Numeral.
      * @returns {String}  Roman Numeral string value for the passed in integer
      */
-    exports.getNumeral = function(number){
+    var getNumeral = function(number){
         if(!existy(number) || number === ''){
             return '';
         }
@@ -486,15 +488,38 @@
     };
 
     /**
-     * 
+     * Takes a number and returns an array of two parts: the barred numerals
+     * and the unbarred numerals.
+     * @param  {Integer} number
+     * @return {Array}
+     */
+    var getNumeralParts = function(number){
+        var numeral = getNumeral(number);
+        var parts = numeral.match(/([a-z]+)?([A-Z]+)?/);
+        parts.shift();
+        parts.map(function(n){
+            return typeof n === 'undefined' ? n : n.toUpperCase();
+        });
+
+        return parts;
+    };
+
+    /**
+     * Takes a numeral and returns the equavalent number.
      * @param   {String}  numeral Numeral to be converted to a number.
      * @returns {Integer} Integer value of the passed in Roman Numeral string
      */
-    exports.getNumber = function(numeral){
+    var getNumber = function(numeral){
         if(!existy(numeral) || numeral === ''){
             return '';
         }
 
         return processNumeral(numeral);
+    };
+
+    module.exports = {
+        getNumeral: getNumeral,
+        getNumeralParts: getNumeralParts,
+        getNumber: getNumber
     };
 }));
