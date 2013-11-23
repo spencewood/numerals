@@ -9,14 +9,16 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['exports'], factory);
+        define(factory);
     } else if (typeof exports === 'object') {
-        // CommonJS
-        factory(exports);
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like enviroments that support module.exports,
+        // like Node.
+        module.exports = factory();
     } else {
-        // Browser globals
-        factory((root.commonJsStrict = {}));
-    }
+        // Browser globals (root is window)
+        root.returnExports = factory();
+  }
 }(this, function (exports) {
     var nums = [
         { number: 1, numeral: 'I' },
@@ -517,7 +519,7 @@
         return processNumeral(numeral);
     };
 
-    module.exports = {
+    return {
         getNumeral: getNumeral,
         getNumeralParts: getNumeralParts,
         getNumber: getNumber
