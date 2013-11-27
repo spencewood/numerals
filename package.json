@@ -2,7 +2,7 @@
     "name": "Numerals",
     "version": "1.0.0",
     "description": "A numeral to number and number to numeral converter",
-    "main": './numerals',
+    "main": "./numerals",
     "repository" :{ 
         "type" : "git",
         "url" : "https://github.com/tcollard/numerals.git"
